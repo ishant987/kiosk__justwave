@@ -1,0 +1,14 @@
+:root {
+  --color-navy: #1b3057;
+  --color-gold: #d3ae71;
+  --color-ink: #162033;
+  --color-muted: #657083;
+  --color-line: #e5e8ef;
+  --color-background: #f5f7fb;
+  --color-success: #24835b;
+  --color-error: #c13b3a;
+  --color-white: #ffffff;
+  --shadow-soft: 0 18px 60px rgba(22, 32, 51, 0.11);
+  --radius: 8px;
+  --font-primary: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+}
