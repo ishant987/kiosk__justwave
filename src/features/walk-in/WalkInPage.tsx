@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { lookupParent } from '../../api/entryExit.api';
 import { getApiErrorMessage } from '../../api/httpClient';
 import { getLocations } from '../../api/locations.api';
 import { Button } from '../../components/Button';
-import { Select } from '../../components/Select';
 import { Toast } from '../../components/Toast';
+import type { Branch } from '../../models/branch';
 import type { ChildProfile } from '../../models/child';
-import playzoneArt from '../../public/ChatGPT Image May 3, 2026, 11_04_48 AM.png';
-import justWaveLogo from '../../../playstore.png';
+import pageOneArt from '../../public/page1.svg';
 import { useAuthStore } from '../auth/auth.store';
 import { useWalkInStore } from './walkIn.store';
 
@@ -21,6 +20,20 @@ const keyboardRows = [
 ];
 
 const childAvatar = (name: string) => name.trim().slice(0, 1).toUpperCase() || 'J';
+
+const assignedBranchFromUser = (user: ReturnType<typeof useAuthStore.getState>['user']): Branch | undefined => {
+  const nestedBranch = user?.location ?? user?.branch;
+  const id = user?.location_id ?? user?.branch_id ?? nestedBranch?.id;
+  if (!id) return undefined;
+
+  return {
+    id,
+    name: user?.location_name ?? user?.branch_name ?? nestedBranch?.name ?? 'Assigned branch',
+    address: nestedBranch?.address,
+    city: nestedBranch?.city,
+    is_active: nestedBranch?.is_active
+  };
+};
 
 type ActiveTextField = { type: 'parent' } | { type: 'child'; index: number };
 type KeyboardMode = 'none' | 'number' | 'text';
@@ -45,22 +58,25 @@ function KioskTextInput({ fieldId, label, value, placeholder, active, onFocus }:
 
 export function WalkInPage() {
   const navigate = useNavigate();
-  const routeLocation = useLocation();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { location, phone, parent, selectedChildren, newChildNames, customerName, updateDraft } = useWalkInStore();
   const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>('none');
   const [activeTextField, setActiveTextField] = useState<ActiveTextField | null>(null);
-  const [branchOpen, setBranchOpen] = useState(false);
   const [lookedUpPhone, setLookedUpPhone] = useState(() => (parent && /^\d{10}$/.test(phone) ? phone : ''));
   const clearSession = useAuthStore((state) => state.clearSession);
+  const authUser = useAuthStore((state) => state.user);
   const locationsQuery = useQuery({ queryKey: ['locations'], queryFn: getLocations });
-  const routeMessage = (routeLocation.state as { message?: string } | null)?.message;
 
   useEffect(() => {
-    if (!location && locationsQuery.data?.length) {
-      updateDraft({ location: locationsQuery.data[0] });
+    const assignedBranch = assignedBranchFromUser(authUser);
+    const resolvedBranch = assignedBranch?.id
+      ? locationsQuery.data?.find((branch) => branch.id === assignedBranch.id) ?? assignedBranch
+      : locationsQuery.data?.[0];
+
+    if (resolvedBranch && location?.id !== resolvedBranch.id) {
+      updateDraft({ location: resolvedBranch, passes: [], passIds: [] });
     }
-  }, [location, locationsQuery.data, updateDraft]);
+  }, [authUser, location?.id, locationsQuery.data, updateDraft]);
 
   const lookupMutation = useMutation({
     mutationFn: (mobile: string) => lookupParent(mobile),
@@ -74,7 +90,9 @@ export function WalkInPage() {
         parent: mergedParent,
         selectedChildren: [],
         customerName: mergedParent?.name ?? '',
-        newChildNames: children.length ? [''] : ['']
+        newChildNames: children.length ? [''] : [''],
+        passes: [],
+        passIds: []
       });
     }
   });
@@ -84,6 +102,8 @@ export function WalkInPage() {
     const phoneChangedAfterLookup = lookedUpPhone && mobile !== lookedUpPhone;
     updateDraft({
       phone: mobile,
+      passes: [],
+      passIds: [],
       ...(phoneChangedAfterLookup || mobile.length < 10
         ? { parent: null, selectedChildren: [], customerName: '', newChildNames: [''] }
         : {})
@@ -134,12 +154,18 @@ export function WalkInPage() {
     updateDraft({
       selectedChildren: exists
         ? selectedChildren.filter((selected) => selected.id !== child.id)
-        : [...selectedChildren, child]
+        : [...selectedChildren, child],
+      passes: [],
+      passIds: []
     });
   };
 
   const updateChildName = (index: number, value: string) => {
-    updateDraft({ newChildNames: newChildNames.map((name, childIndex) => (childIndex === index ? value : name)) });
+    updateDraft({
+      newChildNames: newChildNames.map((name, childIndex) => (childIndex === index ? value : name)),
+      passes: [],
+      passIds: []
+    });
   };
 
   const getTextFieldValue = () => {
@@ -151,7 +177,7 @@ export function WalkInPage() {
   const setTextFieldValue = (value: string) => {
     if (!activeTextField) return;
     if (activeTextField.type === 'parent') {
-      updateDraft({ customerName: value });
+      updateDraft({ customerName: value, passes: [], passIds: [] });
       return;
     }
     updateChildName(activeTextField.index, value);
@@ -196,38 +222,15 @@ export function WalkInPage() {
     <main className="kiosk-stage">
       <section className="kiosk-device walk-device">
         <div className="kiosk-top-actions">
-          <button type="button" aria-label="Select branch" title={location?.name ?? 'Select branch'} onClick={() => setBranchOpen(true)}>
-            ⌂
-          </button>
           <button type="button" aria-label="Logout" title="Logout" onClick={clearSession}>
             ⇥
           </button>
         </div>
-        {branchOpen ? (
-          <div className="branch-popover">
-            <Select
-              label="Branch"
-              value={location?.id ?? ''}
-              onChange={(event) => {
-                updateDraft({ location: locationsQuery.data?.find((branch) => branch.id === event.target.value) });
-                setBranchOpen(false);
-              }}
-              options={(locationsQuery.data ?? []).map((branch) => ({ value: branch.id, label: branch.name }))}
-            />
-            <Button type="button" variant="ghost" onClick={() => setBranchOpen(false)}>
-              Close
-            </Button>
-          </div>
-        ) : null}
 
         <div className={keyboardMode !== 'none' ? 'kiosk-scroll keyboard-open' : 'kiosk-scroll'}>
-          <div className="walk-hero" style={{ backgroundImage: `url("${playzoneArt}")` }}>
-            <img className="jw-logo" src={justWaveLogo} alt="JustWave" />
-            <h1>JustWave</h1>
-            <strong>PLAYZONE</strong>
-            <h2>Welcome!</h2>
-            <p>Create your Walk-In Pass</p>
-          </div>
+          <section className="walk-hero">
+            <img className="walk-hero-art" src={pageOneArt} alt="JustWave Playzone" />
+          </section>
 
           <section className="walk-sheet">
             <div className="kiosk-section-title">
@@ -257,7 +260,6 @@ export function WalkInPage() {
             </label>
 
             {lookupMutation.isPending ? <Toast>Looking up customer...</Toast> : null}
-            {routeMessage ? <Toast tone="error">{routeMessage}</Toast> : null}
             {lookupMutation.isError ? <Toast tone="error">{getApiErrorMessage(lookupMutation.error)}</Toast> : null}
             {lookupComplete && !parent ? (
               <Toast>Add parent and child details for a new walk-in.</Toast>
@@ -332,7 +334,11 @@ export function WalkInPage() {
                         onFocus={() => openTextKeyboard({ type: 'child', index })}
                       />
                     ))}
-                  <Button type="button" variant="secondary" onClick={() => updateDraft({ newChildNames: [...newChildNames, ''] })}>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => updateDraft({ newChildNames: [...newChildNames, ''], passes: [], passIds: [] })}
+                  >
                     Add New Child
                   </Button>
                 </div>
@@ -351,7 +357,7 @@ export function WalkInPage() {
             >
               Continue
             </Button>
-            <p className="kiosk-footnote">Quick and easy | Takes less than 10 seconds</p>
+            <p className="kiosk-footnote">{location?.name ?? 'Branch assigned at login'}</p>
           </section>
         </div>
         <div className={keyboardMode !== 'none' ? 'keyboard-sheet open' : 'keyboard-sheet'} aria-label="Keyboard">
@@ -363,16 +369,18 @@ export function WalkInPage() {
                   {digit}
                 </button>
               ))}
-              <button type="button" onClick={() => (activeTextField ? setKeyboardMode('text') : closeKeyboard())}>
-                {activeTextField ? 'ABC' : 'Done'}
-              </button>
+              {activeTextField ? (
+                <button type="button" onClick={() => setKeyboardMode('text')}>
+                  ABC
+                </button>
+              ) : null}
               <button type="button" onClick={() => addDigit('0')}>
                 0
               </button>
               <button type="button" onClick={removeDigit}>
                 Delete
               </button>
-              <button type="button" className="number-pad-wide" onClick={closeKeyboard}>
+              <button type="button" onClick={closeKeyboard}>
                 Done
               </button>
             </div>

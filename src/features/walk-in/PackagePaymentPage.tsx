@@ -8,15 +8,13 @@ import { Button } from '../../components/Button';
 import { Toast } from '../../components/Toast';
 import type { DurationPackage } from '../../models/durationPackage';
 import type { EntryPass } from '../../models/entryPass';
-import pageTwoArt from '../../public/2page.png';
+import pageTwoArt from '../../../hhh.png';
 import { openRazorpayCheckout } from './razorpay';
 import { useWalkInStore } from './walkIn.store';
 
 const paymentMethods = [
   { id: 'upi', label: 'UPI', detail: 'Pay using any UPI App' },
-  { id: 'card', label: 'Card', detail: 'Debit / Credit Card' },
-  { id: 'wallet', label: 'Wallet', detail: 'Pay using Wallet' },
-  { id: 'netbanking', label: 'Net Banking', detail: 'All major banks' }
+  { id: 'card', label: 'Card', detail: 'Debit / Credit Card' }
 ];
 
 const packageMinutes = (item: DurationPackage) => item.duration_minutes ?? (Number.parseInt(item.name ?? item.label ?? '0', 10) || 0);
@@ -31,9 +29,7 @@ const getRazorpayCheckoutConfig = (order: unknown) => {
 };
 const razorpayMethodFor = (methodId: PaymentMethodId) => ({
   upi: methodId === 'upi',
-  card: methodId === 'card',
-  wallet: methodId === 'wallet',
-  netbanking: methodId === 'netbanking'
+  card: methodId === 'card'
 });
 
 export function PackagePaymentPage() {
@@ -54,20 +50,27 @@ export function PackagePaymentPage() {
     mutationFn: async (methodId: PaymentMethodId) => {
       if (!draft.location || !draft.durationPackage) throw new Error('Branch and package are required.');
 
-      const newNames = draft.newChildNames.map((name) => name.trim()).filter(Boolean);
-      const result = await createPasses({
-        location_id: draft.location.id,
-        phone: draft.phone,
-        duration_price_id: draft.durationPackage.id,
-        parent_id: draft.parent?.id,
-        child_ids: draft.selectedChildren.map((child) => child.id),
-        customer_name: draft.parent ? undefined : draft.customerName,
-        child_count: draft.parent ? undefined : newNames.length,
-        child_names: newNames.length ? newNames : undefined
-      });
+      let passes = draft.passes;
+      let ids = draft.passIds;
 
-      const passes = result.passes ?? result.data ?? (result.pass ? [result.pass] : []);
-      const ids = result.payment?.ids ?? result.ids ?? passes.map((pass: EntryPass) => pass.id);
+      if (!ids.length) {
+        const newNames = draft.newChildNames.map((name) => name.trim()).filter(Boolean);
+        const result = await createPasses({
+          location_id: draft.location.id,
+          phone: draft.phone,
+          duration_price_id: draft.durationPackage.id,
+          parent_id: draft.parent?.id,
+          child_ids: draft.selectedChildren.map((child) => child.id),
+          customer_name: draft.parent ? undefined : draft.customerName,
+          child_count: draft.parent ? undefined : newNames.length,
+          child_names: newNames.length ? newNames : undefined
+        });
+
+        passes = result.passes ?? result.data ?? (result.pass ? [result.pass] : []);
+        ids = result.payment?.ids ?? result.ids ?? passes.map((pass: EntryPass) => pass.id);
+        draft.updateDraft({ passes, passIds: ids });
+      }
+
       if (!ids.length) throw new Error('No pass ids returned by backend.');
 
       const order = await createEntryPassRazorpayOrder(ids);
@@ -83,7 +86,7 @@ export function PackagePaymentPage() {
     },
     onSuccess: ({ passes, ids }) => {
       draft.updateDraft({ passes, passIds: ids });
-      navigate('/walk-in/print');
+      navigate('/walk-in/print', { replace: true });
     },
     onError: async (error) => {
       if (isDuplicateParentPhoneError(error)) {
@@ -108,7 +111,7 @@ export function PackagePaymentPage() {
   };
 
   if (!draft.location || !draft.phone || (!draft.parent && !draft.customerName)) {
-    return <Navigate to="/walk-in" replace state={{ message: 'Walk-in details were missing. Please enter the phone number again.' }} />;
+    return <Navigate to="/walk-in" replace />;
   }
 
   const children = [
@@ -146,7 +149,7 @@ export function PackagePaymentPage() {
                   type="button"
                   className={selected ? 'package-card selected' : 'package-card'}
                   key={item.id}
-                  onClick={() => draft.updateDraft({ durationPackage: item })}
+                  onClick={() => draft.updateDraft({ durationPackage: item, passes: [], passIds: [] })}
                 >
                   {minutes === 60 ? <span className="popular-pill">Popular</span> : null}
                   <span className="package-clock">◷</span>
