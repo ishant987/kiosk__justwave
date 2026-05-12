@@ -441,9 +441,7 @@ a {
   display: grid;
   place-items: center;
   padding: clamp(24px, 4vw, 72px);
-  background:
-    radial-gradient(circle at 16% 18%, rgba(125, 85, 255, 0.12), transparent 28%),
-    linear-gradient(135deg, #f7f9ff 0%, #fffaf0 100%);
+  background: #f5f7fb;
 }
 
 .login-panel {
@@ -452,7 +450,7 @@ a {
   width: min(1240px, 100%);
   min-height: min(720px, calc(100dvh - 96px));
   overflow: hidden;
-  border: 1px solid rgba(211, 174, 113, 0.38);
+  border: 1px solid rgba(27, 48, 87, 0.12);
   border-radius: 28px;
   background: var(--color-white);
   box-shadow: 0 28px 80px rgba(22, 32, 51, 0.14);
@@ -461,70 +459,63 @@ a {
 .login-art {
   display: grid;
   align-content: center;
-  justify-items: start;
-  gap: 18px;
+  justify-items: center;
   padding: clamp(42px, 5vw, 72px);
-  color: var(--color-white);
-  background:
-    linear-gradient(rgba(27, 48, 87, 0.72), rgba(27, 48, 87, 0.86)),
-    url("../public/ChatGPT Image May 3, 2026, 11_04_48 AM.png") center / cover;
+  background: var(--color-white);
 }
 
 .login-art img {
-  width: 118px;
-  height: 118px;
+  width: min(340px, 74%);
+  height: auto;
   object-fit: contain;
-  border-radius: 28px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.2);
-}
-
-.login-art h1 {
-  margin: 0;
-  max-width: 460px;
-  font-size: clamp(3.2rem, 4.4vw, 5.8rem);
-  line-height: 0.95;
-}
-
-.login-art p {
-  margin: 0;
-  max-width: 500px;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: clamp(1.05rem, 1.2vw, 1.32rem);
-  font-weight: 700;
-  line-height: 1.5;
+  border-radius: 32px;
+  box-shadow: none;
 }
 
 .login-panel form {
   align-content: center;
   gap: 22px;
   padding: clamp(42px, 5vw, 72px);
+  color: var(--color-white);
+  background: var(--color-navy);
 }
 
 .login-panel .page-header p {
-  color: #5d35d5;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .login-panel .page-header h2 {
-  color: var(--color-navy);
+  color: var(--color-white);
   font-size: clamp(2.2rem, 3vw, 3.6rem);
+}
+
+.login-panel .field span {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .login-panel .field input {
   min-height: 64px;
-  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.24);
+  border-width: 1px;
   border-radius: 16px;
   padding: 0 18px;
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.11);
   font-size: 1.08rem;
   font-weight: 800;
+}
+
+.login-panel .field input:focus {
+  outline: 3px solid rgba(211, 174, 113, 0.32);
+  border-color: var(--color-gold);
 }
 
 .login-panel .button {
   min-height: 68px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #6434df, #481fc5);
-  box-shadow: 0 16px 32px rgba(82, 42, 204, 0.24);
+  color: var(--color-navy);
+  background: var(--color-gold);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
   font-size: 1.18rem;
   text-transform: uppercase;
 }

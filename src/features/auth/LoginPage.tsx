@@ -7,7 +7,7 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Toast } from '../../components/Toast';
 import { useAuthStore } from './auth.store';
-import justWaveLogo from '../../../playstore.png';
+import justWaveLogo from '../../../File 11.png';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -36,8 +36,6 @@ export function LoginPage() {
       <section className="login-panel">
         <div className="login-art">
           <img src={justWaveLogo} alt="JustWave" />
-          <h1>JustWave Entry</h1>
-          <p>Staff kiosk for walk-in passes, payment collection, QR printing, and overtime settlement.</p>
         </div>
         <form className="form-stack" onSubmit={onSubmit}>
           <header className="page-header">
