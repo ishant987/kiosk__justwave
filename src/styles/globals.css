@@ -814,8 +814,8 @@ a {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  color: #5a35d6;
-  background: #f0eaff;
+  color: var(--color-navy);
+  background: #fff4df;
   font-size: 1.55rem;
   font-weight: 900;
 }
@@ -824,7 +824,7 @@ a {
 .clock-icon,
 .ticket-icon,
 .wallet-icon {
-  color: #5d3bd6;
+  color: var(--color-navy);
 }
 
 .phone-box {
@@ -832,16 +832,16 @@ a {
   grid-template-columns: 110px 1fr;
   min-height: 74px;
   overflow: hidden;
-  border: 2px solid #7d55ff;
+  border: 2px solid var(--color-gold);
   border-radius: 16px;
   background: var(--color-white);
-  box-shadow: 0 10px 35px rgba(103, 62, 227, 0.12);
+  box-shadow: 0 10px 35px rgba(211, 174, 113, 0.18);
 }
 
 .phone-box span {
   display: grid;
   place-items: center;
-  background: #f4f0ff;
+  background: #fff4df;
   color: #07133d;
   font-size: 1.75rem;
   font-weight: 900;
@@ -864,7 +864,7 @@ a {
 
 .kiosk-text-field input {
   min-height: 62px;
-  border: 2px solid #ddd7ff;
+  border: 2px solid #eadcc4;
   border-radius: 14px;
   padding: 0 18px;
   color: #07133d;
@@ -875,8 +875,8 @@ a {
 }
 
 .kiosk-text-field.active input {
-  border-color: #7d55ff;
-  box-shadow: 0 10px 30px rgba(103, 62, 227, 0.14);
+  border-color: var(--color-gold);
+  box-shadow: 0 10px 30px rgba(211, 174, 113, 0.18);
 }
 
 .number-pad {
@@ -887,22 +887,22 @@ a {
 
 .number-pad button {
   min-height: 58px;
-  border: 1px solid #ddd7ff;
+  border: 1px solid #eadcc4;
   border-radius: 12px;
   color: #0b1640;
-  background: #faf9ff;
+  background: #fffaf0;
   cursor: pointer;
   font-size: 1.2rem;
   font-weight: 900;
 }
 
 .number-pad button:last-child {
-  color: #5d3bd6;
+  color: var(--color-navy);
 }
 
 .number-pad .number-pad-wide {
   grid-column: 1 / -1;
-  color: #5d3bd6;
+  color: var(--color-navy);
 }
 
 .keyboard-sheet {
@@ -915,7 +915,7 @@ a {
   gap: 12px;
   margin-top: -1px;
   padding: 10px 24px 24px;
-  border-top: 1px solid #ddd7ff;
+  border-top: 1px solid #eadcc4;
   border-radius: 24px 24px 0 0;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 -18px 45px rgba(7, 19, 61, 0.16);
@@ -954,10 +954,10 @@ a {
 .text-pad button {
   min-width: 43px;
   min-height: 52px;
-  border: 1px solid #ddd7ff;
+  border: 1px solid #eadcc4;
   border-radius: 12px;
   color: #0b1640;
-  background: #faf9ff;
+  background: #fffaf0;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 900;
@@ -970,7 +970,7 @@ a {
 
 .text-pad-row.controls button {
   width: 100%;
-  color: #5d3bd6;
+  color: var(--color-navy);
 }
 
 .divider {
@@ -1018,10 +1018,10 @@ a {
   align-items: center;
   min-height: 96px;
   width: 100%;
-  border: 2px solid #d8caff;
+  border: 2px solid #eadcc4;
   border-radius: 18px;
   padding: 14px;
-  background: linear-gradient(90deg, #fbfaff, #ffffff);
+  background: linear-gradient(90deg, #fffaf0, #ffffff);
   color: #0b1640;
   cursor: pointer;
   text-align: left;
@@ -1033,8 +1033,8 @@ a {
 }
 
 .kid-card.selected {
-  border-color: #7d55ff;
-  box-shadow: 0 12px 32px rgba(103, 62, 227, 0.13);
+  border-color: var(--color-navy);
+  box-shadow: 0 12px 32px rgba(27, 48, 87, 0.13);
 }
 
 .kid-avatar {
@@ -1060,7 +1060,7 @@ a {
 
 .kid-card small {
   margin-top: 5px;
-  color: #5d3bd6;
+  color: var(--color-navy);
   font-size: 1rem;
   font-weight: 800;
 }
@@ -1071,21 +1071,21 @@ a {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  color: #5d35d5;
+  color: var(--color-navy);
   background: var(--color-white);
-  border: 2px solid #5d35d5;
+  border: 2px solid var(--color-navy);
   font-size: 1.2rem;
 }
 
 .kid-card.selected b {
   color: var(--color-white);
-  background: #5d35d5;
+  background: var(--color-navy);
 }
 
 .new-child-stack .button-secondary {
   min-height: 72px;
   border-color: #f4c34c;
-  color: #987313;
+  color: var(--color-navy);
   background: #fffaf0;
   font-size: 1.25rem;
 }
@@ -1094,8 +1094,8 @@ a {
   min-height: 86px;
   border-radius: 18px;
   color: var(--color-white);
-  background: linear-gradient(135deg, #6434df, #481fc5);
-  box-shadow: 0 16px 32px rgba(82, 42, 204, 0.28);
+  background: linear-gradient(135deg, var(--color-navy), #0b1640);
+  box-shadow: 0 16px 32px rgba(27, 48, 87, 0.28);
   font-size: 1.7rem;
   text-transform: uppercase;
 }
@@ -1148,8 +1148,8 @@ a {
 }
 
 .package-card.selected {
-  border: 2px solid #7d55ff;
-  background: #fbfaff;
+  border: 2px solid var(--color-navy);
+  background: #fffaf0;
 }
 
 .package-clock {
@@ -1158,8 +1158,8 @@ a {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  color: #704cff;
-  background: #f0eaff;
+  color: var(--color-navy);
+  background: #fff4df;
   font-size: 1.9rem;
 }
 
@@ -1168,7 +1168,7 @@ a {
 }
 
 .package-card small {
-  color: #30208e;
+  color: var(--color-navy);
   font-size: 1rem;
   font-weight: 900;
 }
@@ -1183,7 +1183,7 @@ a {
   height: 34px;
   border-radius: 50%;
   color: var(--color-white);
-  background: #5d35d5;
+  background: var(--color-navy);
 }
 
 .popular-pill {
@@ -1233,7 +1233,7 @@ a {
 }
 
 .summary-total strong {
-  color: #4c25cf;
+  color: var(--color-navy);
 }
 
 .pay-method-grid {
@@ -1257,8 +1257,8 @@ a {
 }
 
 .pay-method.selected {
-  border: 2px solid #7d55ff;
-  background: #fbfaff;
+  border: 2px solid var(--color-navy);
+  background: #fffaf0;
 }
 
 .pay-method strong {
@@ -1300,11 +1300,11 @@ a {
 .ticket-card {
   display: grid;
   gap: 22px;
-  border: 2px solid #d8caff;
+  border: 2px solid #eadcc4;
   border-radius: 24px;
   padding: 22px;
-  background: linear-gradient(180deg, #ffffff, #fbfaff);
-  box-shadow: 0 18px 45px rgba(82, 42, 204, 0.12);
+  background: linear-gradient(180deg, #ffffff, #fffaf0);
+  box-shadow: 0 18px 45px rgba(27, 48, 87, 0.12);
 }
 
 .ticket-status {
