@@ -13,6 +13,12 @@ body {
   font-family: var(--font-primary);
 }
 
+html,
+#root {
+  min-height: 100%;
+  background: var(--color-background);
+}
+
 button,
 input,
 select {
@@ -555,20 +561,21 @@ a {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 18px;
-  background: #eee8df;
+  overflow: hidden;
+  padding: 0;
+  background: var(--color-background);
 }
 
 .kiosk-device {
   position: relative;
-  width: min(100%, 640px);
-  height: min(100dvh - 36px, 1138px);
-  min-height: 720px;
+  width: min(100vw, calc(100dvh * 16 / 9));
+  height: min(100dvh, calc(100vw * 9 / 16));
+  min-height: 0;
   overflow: auto;
-  border: 18px solid #050508;
-  border-radius: 36px;
+  border: 0;
+  border-radius: 0;
   background: var(--color-white);
-  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.32);
+  box-shadow: none;
   scrollbar-width: thin;
 }
 
@@ -1379,6 +1386,82 @@ a {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding: 0 18px 22px;
+}
+
+@media (min-width: 900px) and (min-aspect-ratio: 4 / 3) {
+  .walk-device .kiosk-scroll {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(560px, 1.05fr);
+    overflow: hidden;
+    scroll-padding-bottom: 0;
+  }
+
+  .walk-device .kiosk-scroll.keyboard-open {
+    padding-bottom: 0;
+  }
+
+  .walk-hero {
+    min-height: 100%;
+    align-content: center;
+    padding: 52px;
+    background-position: center;
+  }
+
+  .walk-hero h2 {
+    margin-top: 56px;
+    font-size: clamp(4rem, 5vw, 6.4rem);
+  }
+
+  .walk-sheet {
+    align-content: start;
+    margin-top: 0;
+    overflow-y: auto;
+    border-radius: 0;
+    padding: clamp(28px, 3vw, 56px);
+  }
+
+  .kiosk-text-field input,
+  .phone-box {
+    min-height: 68px;
+  }
+
+  .keyboard-sheet {
+    left: auto;
+    width: min(820px, 56%);
+    padding: 12px 28px 28px;
+  }
+
+  .kiosk-device:not(.walk-device) {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(640px, 1.2fr);
+    overflow: hidden;
+  }
+
+  .kiosk-device:not(.walk-device) .payment-hero {
+    min-height: 100%;
+    height: 100%;
+  }
+
+  .kiosk-device:not(.walk-device) .payment-hero img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .payment-sheet,
+  .ticket-sheet {
+    overflow-y: auto;
+    margin-top: 0;
+    border-radius: 0;
+    padding: clamp(28px, 3vw, 56px);
+  }
+
+  .package-card {
+    min-height: 136px;
+  }
+
+  .pay-method {
+    min-height: 112px;
+  }
 }
 
 @page {
