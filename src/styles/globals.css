@@ -24,6 +24,49 @@ a {
   text-decoration: none;
 }
 
+.app-error {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+  color: var(--color-ink);
+  background: var(--color-background);
+}
+
+.app-error section {
+  width: min(100%, 520px);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  padding: 24px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.app-error p {
+  margin: 0 0 8px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.app-error h1 {
+  margin: 0 0 18px;
+  color: var(--color-navy);
+  font-size: 1.35rem;
+}
+
+.app-error button {
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 0 18px;
+  color: var(--color-white);
+  background: var(--color-navy);
+  cursor: pointer;
+  font-weight: 800;
+}
+
 .app-shell {
   min-height: 100vh;
   padding: 18px;
