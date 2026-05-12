@@ -474,15 +474,6 @@ a {
   box-shadow: none;
 }
 
-.login-art p {
-  max-width: 460px;
-  margin: 0;
-  color: var(--color-muted);
-  font-size: clamp(1.05rem, 1.2vw, 1.32rem);
-  font-weight: 800;
-  line-height: 1.5;
-}
-
 .login-panel form {
   align-content: center;
   gap: 22px;

@@ -36,7 +36,6 @@ export function LoginPage() {
       <section className="login-panel">
         <div className="login-art">
           <img src={justWaveLogo} alt="JustWave" />
-          <p>Fast walk-in passes, secure payments, and instant QR printing for the JustWave kiosk desk.</p>
         </div>
         <form className="form-stack" onSubmit={onSubmit}>
           <header className="page-header">
