@@ -19,6 +19,13 @@ html,
   background: var(--color-background);
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
 button,
 input,
 select {
@@ -558,18 +565,19 @@ a {
 }
 
 .kiosk-stage {
+  width: 100vw;
+  height: 100dvh;
   min-height: 100dvh;
   display: grid;
-  place-items: center;
-  overflow: hidden;
+  overflow: auto;
   padding: 0;
   background: var(--color-background);
 }
 
 .kiosk-device {
   position: relative;
-  width: min(100vw, calc(100dvh * 16 / 9));
-  height: min(100dvh, calc(100vw * 9 / 16));
+  width: 100vw;
+  height: 100dvh;
   min-height: 0;
   overflow: auto;
   border: 0;
@@ -1000,15 +1008,9 @@ a {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  color: #5d35d5;
-  background: var(--color-white);
-  border: 2px solid #5d35d5;
-  font-size: 1.2rem;
-}
-
-.kid-card.selected b {
   color: var(--color-white);
   background: #5d35d5;
+  font-size: 1.2rem;
 }
 
 .new-child-stack .button-secondary {
@@ -1398,7 +1400,7 @@ a {
   .walk-device .kiosk-scroll {
     display: grid;
     grid-template-columns: minmax(0, 0.95fr) minmax(560px, 1.05fr);
-    overflow: hidden;
+    overflow: auto;
     scroll-padding-bottom: 0;
   }
 
@@ -1440,7 +1442,7 @@ a {
   .kiosk-device:not(.walk-device) {
     display: grid;
     grid-template-columns: minmax(0, 0.8fr) minmax(640px, 1.2fr);
-    overflow: hidden;
+    overflow: auto;
   }
 
   .kiosk-device:not(.walk-device) .payment-hero {
