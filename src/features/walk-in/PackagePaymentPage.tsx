@@ -8,7 +8,7 @@ import { Button } from '../../components/Button';
 import { Toast } from '../../components/Toast';
 import type { DurationPackage } from '../../models/durationPackage';
 import type { EntryPass } from '../../models/entryPass';
-import pageTwoArt from '../../../hhh.png';
+import pageTwoArt from '../../public/hhh.webp';
 import { openRazorpayCheckout } from './razorpay';
 import { useWalkInStore } from './walkIn.store';
 

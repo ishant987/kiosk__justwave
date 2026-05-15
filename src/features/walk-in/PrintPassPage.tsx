@@ -7,7 +7,7 @@ import { getApiErrorMessage } from '../../api/httpClient';
 import { Button } from '../../components/Button';
 import { Toast } from '../../components/Toast';
 import type { EntryPass } from '../../models/entryPass';
-import pageTwoArt from '../../../hhh.png';
+import pageTwoArt from '../../public/hhh.webp';
 import { useWalkInStore } from './walkIn.store';
 
 const shortId = (value: string) => value.replace(/-/g, '').slice(0, 8).toUpperCase();

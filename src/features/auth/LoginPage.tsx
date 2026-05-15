@@ -7,7 +7,7 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Toast } from '../../components/Toast';
 import { useAuthStore } from './auth.store';
-import justWaveLogo from '../../../onw.png';
+import justWaveLogo from '../../public/onw.webp';
 
 export function LoginPage() {
   const navigate = useNavigate();
