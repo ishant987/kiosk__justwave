@@ -63,7 +63,6 @@ export function WalkInPage() {
   const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>('none');
   const [activeTextField, setActiveTextField] = useState<ActiveTextField | null>(null);
   const [lookedUpPhone, setLookedUpPhone] = useState(() => (parent && /^\d{10}$/.test(phone) ? phone : ''));
-  const clearSession = useAuthStore((state) => state.clearSession);
   const authUser = useAuthStore((state) => state.user);
   const locationsQuery = useQuery({ queryKey: ['locations'], queryFn: getLocations });
 
@@ -221,12 +220,6 @@ export function WalkInPage() {
   return (
     <main className="kiosk-stage">
       <section className="kiosk-device walk-device">
-        <div className="kiosk-top-actions">
-          <button type="button" aria-label="Logout" title="Logout" onClick={clearSession}>
-            ⇥
-          </button>
-        </div>
-
         <div className={keyboardMode !== 'none' ? 'kiosk-scroll keyboard-open' : 'kiosk-scroll'}>
           <section className="walk-hero">
             <img className="walk-hero-art" src={pageOneArt} alt="JustWave Playzone" />

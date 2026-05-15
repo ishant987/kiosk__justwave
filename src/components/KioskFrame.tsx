@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router';
-import { Button } from './Button';
-import { useAuthStore } from '../features/auth/auth.store';
 
 interface KioskFrameProps {
   title: string;
@@ -11,8 +9,6 @@ interface KioskFrameProps {
 }
 
 export function KioskFrame({ title, eyebrow, children, aside }: KioskFrameProps) {
-  const clearSession = useAuthStore((state) => state.clearSession);
-
   return (
     <main className="app-shell">
       <nav className="topbar">
@@ -23,9 +19,6 @@ export function KioskFrame({ title, eyebrow, children, aside }: KioskFrameProps)
         <div className="nav-links">
           <NavLink to="/walk-in">Walk-in</NavLink>
         </div>
-        <Button type="button" variant="ghost" onClick={clearSession}>
-          Logout
-        </Button>
       </nav>
       <section className="kiosk-frame">
         <div className="kiosk-content">

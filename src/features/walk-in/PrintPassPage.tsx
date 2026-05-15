@@ -13,6 +13,13 @@ import { useWalkInStore } from './walkIn.store';
 const shortId = (value: string) => value.replace(/-/g, '').slice(0, 8).toUpperCase();
 const minutesFromPackage = (value?: { duration_minutes?: number; name?: string; label?: string }) =>
   value?.duration_minutes ?? (Number.parseInt(value?.name ?? value?.label ?? '0', 10) || 0);
+const AUTO_PRINT_DELAY_MS = 300;
+
+const printTicket = () => {
+  window.requestAnimationFrame(() => {
+    window.setTimeout(() => window.print(), AUTO_PRINT_DELAY_MS);
+  });
+};
 
 export function PrintPassPage() {
   const navigate = useNavigate();
@@ -20,7 +27,7 @@ export function PrintPassPage() {
   const autoPrintStarted = useRef(false);
   const mutation = useMutation({
     mutationFn: () => recordPrint(passIds),
-    onSuccess: () => window.print()
+    onSuccess: printTicket
   });
 
   useEffect(() => {
@@ -105,9 +112,6 @@ export function PrintPassPage() {
           </section>
 
           <div className="thermal-actions no-print">
-            <Button type="button" onClick={() => mutation.mutate()} disabled={mutation.isPending}>
-              {mutation.isPending ? 'Recording print...' : 'Print Pass'}
-            </Button>
             <Button type="button" variant="secondary" onClick={startNewPass}>
               New Pass
             </Button>
