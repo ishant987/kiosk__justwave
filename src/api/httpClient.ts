@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { clearSession, getAccessToken } from '../features/auth/auth.store';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://simbaa.zynapte.in/api/v1';
+const baseURL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 export const httpClient = axios.create({
   baseURL: baseURL.replace(/\/$/, ''),
