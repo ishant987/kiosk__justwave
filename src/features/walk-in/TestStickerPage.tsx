@@ -21,7 +21,7 @@ export function TestStickerPage() {
     style.id = TEST_STICKER_PRINT_STYLE_ID;
     style.textContent = `
       @page {
-        size: 75mm 50mm;
+        size: 3in 2in;
         margin: 0;
       }
 
@@ -29,8 +29,8 @@ export function TestStickerPage() {
         html,
         body,
         #root {
-          width: 75mm;
-          min-width: 75mm;
+          width: 3in;
+          min-width: 3in;
         }
 
         .test-sticker-page,
@@ -38,14 +38,14 @@ export function TestStickerPage() {
         .test-sticker-page .ticket-sheet,
         .test-sticker-page .thermal-preview-sheet,
         .test-sticker-page .thermal-print-area {
-          width: 75mm;
+          width: 3in;
         }
 
         .test-sticker-page .test-thermal-label {
-          width: 70mm;
-          height: 45mm;
-          min-height: 45mm;
-          margin: 2.5mm;
+          width: 3in;
+          height: 2in;
+          min-height: 2in;
+          margin: 0;
           page-break-after: auto;
           break-after: auto;
         }
@@ -76,7 +76,7 @@ export function TestStickerPage() {
               <span className="section-icon ticket-icon">T</span>
               <div>
                 <h3>Test sticker ready</h3>
-                <p>The printer dialog will open with the same preview flow as the pass sticker.</p>
+                <p>The printer dialog will open with the same `3in x 2in` landscape setup as the pass ticket.</p>
               </div>
             </div>
           </section>
@@ -92,11 +92,11 @@ export function TestStickerPage() {
                   </div>
                   <div>
                     <dt>Sheet:</dt>
-                    <dd>75 x 50 mm</dd>
+                    <dd>3in x 2in</dd>
                   </div>
                   <div>
                     <dt>Area:</dt>
-                    <dd>70 x 45 mm</dd>
+                    <dd>Landscape feed</dd>
                   </div>
                   <div>
                     <dt>Check:</dt>

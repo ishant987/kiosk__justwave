@@ -4,8 +4,18 @@ export interface EntryPass {
   qr_token?: string;
   status?: string;
   amount?: number;
+  bill_total_amount?: number;
+  pass_price?: number;
   child_name?: string;
   child_id?: string;
+  customer_name?: string;
+  parent_name?: string;
+  location_name?: string;
+  entry_type?: string;
+  expected_duration_minutes?: number;
+  issued_at?: string;
+  paid_at?: string;
+  print_count?: number;
 }
 
 export interface CreatePassPayload {

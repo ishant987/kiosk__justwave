@@ -1435,56 +1435,88 @@ a {
 }
 
 .thermal-label {
-  width: 80mm;
-  min-height: 40mm;
+  width: 3in;
+  min-height: 2in;
   display: grid;
-  grid-template-columns: 1fr 30mm;
+  grid-template-columns: minmax(0, 1fr) 1.15in;
   gap: 0;
   border: 1.5px solid #111827;
   background: #ffffff;
   color: #111827;
+  box-sizing: border-box;
   break-inside: avoid;
   page-break-inside: avoid;
   font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
 }
 
 .thermal-label-info {
   display: grid;
   align-content: space-between;
   min-width: 0;
-  padding: 3.5mm 4mm 3mm;
+  padding: 0.12in 0.13in 0.1in;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .thermal-label-info h2 {
   margin: 0;
-  max-width: 36mm;
+  max-width: 1.52in;
   color: #111827;
-  font-size: 15pt;
-  line-height: 0.95;
+  font-size: 17pt;
+  line-height: 0.92;
   font-weight: 900;
   text-transform: uppercase;
   overflow-wrap: anywhere;
 }
 
+.thermal-label-copy {
+  display: grid;
+  gap: 0.03in;
+}
+
+.thermal-brand,
+.thermal-pass-type {
+  margin: 0;
+}
+
+.thermal-brand {
+  color: #111827;
+  font-size: 8pt;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.thermal-pass-type {
+  color: #4b5563;
+  font-size: 8pt;
+  line-height: 1.05;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .thermal-label-info dl {
   display: grid;
-  gap: 0.8mm;
+  gap: 0.03in;
   margin: 0;
 }
 
 .thermal-label-info div {
   display: flex;
   min-width: 0;
-  gap: 1mm;
+  justify-content: space-between;
+  gap: 0.06in;
   color: #374151;
-  font-size: 8.5pt;
-  line-height: 1.05;
+  font-size: 7.5pt;
+  line-height: 1.1;
   font-weight: 800;
 }
 
 .thermal-label-info dt {
   flex: 0 0 auto;
   margin: 0;
+  text-transform: uppercase;
 }
 
 .thermal-label-info dd {
@@ -1493,32 +1525,48 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: right;
 }
 
 .thermal-label-qr {
   display: grid;
-  align-content: center;
+  grid-template-rows: auto 1fr auto;
+  align-content: space-between;
   justify-items: center;
-  gap: 1mm;
+  gap: 0.05in;
   border-left: 1.5px dashed #6b7280;
-  padding: 2.5mm;
+  padding: 0.09in 0.08in;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .thermal-label-qr svg {
-  width: 22mm;
-  height: 22mm;
+  width: 0.85in;
+  height: 0.85in;
 }
 
 .thermal-label-qr strong {
   color: #111827;
-  font-size: 7.5pt;
+  font-size: 7pt;
   line-height: 1;
 }
 
+.thermal-print-badge {
+  min-width: 0.65in;
+  border-radius: 999px;
+  border: 1px solid #111827;
+  padding: 0.03in 0.07in;
+  color: #111827;
+  font-size: 6.5pt;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+}
+
 .test-thermal-label {
-  width: 70mm;
-  min-height: 45mm;
-  grid-template-columns: 1fr 22mm;
+  width: 3in;
+  min-height: 2in;
 }
 
 .test-thermal-mark {
@@ -1638,7 +1686,7 @@ a {
 }
 
 @page {
-  size: 80mm 40mm;
+  size: 3in 2in;
   margin: 0;
 }
 
@@ -1646,8 +1694,8 @@ a {
   html,
   body,
   #root {
-    width: 80mm;
-    min-width: 80mm;
+    width: 3in;
+    min-width: 3in;
     height: auto;
     min-height: 0;
     margin: 0;
@@ -1661,7 +1709,7 @@ a {
   .thermal-preview-sheet,
   .thermal-print-area {
     display: block;
-    width: 80mm;
+    width: 3in;
     min-height: 0;
     height: auto;
     margin: 0;
@@ -1688,14 +1736,17 @@ a {
   }
 
   .thermal-label {
-    width: 80mm;
-    height: 40mm;
-    min-height: 40mm;
+    width: 3in;
+    height: 2in;
+    min-height: 2in;
+    max-height: 2in;
     margin: 0;
     border-width: 1px;
     page-break-after: always;
     break-after: page;
     box-shadow: none;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .thermal-label:last-child {
