@@ -1516,18 +1516,13 @@ a {
 }
 
 .test-thermal-label {
-  width: 45mm;
-  min-height: 70mm;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 18mm;
+  width: 70mm;
+  min-height: 45mm;
+  grid-template-columns: 1fr 22mm;
 }
 
 .test-thermal-mark {
-  border-left: 0;
-  border-top: 1.5px dashed #6b7280;
   gap: 1.5mm;
-  grid-auto-flow: column;
-  align-content: center;
 }
 
 .test-thermal-mark span {

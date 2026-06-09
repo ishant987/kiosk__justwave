@@ -21,7 +21,7 @@ export function TestStickerPage() {
     style.id = TEST_STICKER_PRINT_STYLE_ID;
     style.textContent = `
       @page {
-        size: 50mm 75mm;
+        size: 75mm 50mm;
         margin: 0;
       }
 
@@ -29,10 +29,8 @@ export function TestStickerPage() {
         html,
         body,
         #root {
-          width: 50mm;
-          min-width: 50mm;
-          height: 75mm;
-          min-height: 75mm;
+          width: 75mm;
+          min-width: 75mm;
         }
 
         .test-sticker-page,
@@ -40,14 +38,13 @@ export function TestStickerPage() {
         .test-sticker-page .ticket-sheet,
         .test-sticker-page .thermal-preview-sheet,
         .test-sticker-page .thermal-print-area {
-          width: 50mm;
-          min-width: 50mm;
+          width: 75mm;
         }
 
         .test-sticker-page .test-thermal-label {
-          width: 45mm;
-          height: 70mm;
-          min-height: 70mm;
+          width: 70mm;
+          height: 45mm;
+          min-height: 45mm;
           margin: 2.5mm;
           page-break-after: auto;
           break-after: auto;
@@ -95,11 +92,11 @@ export function TestStickerPage() {
                   </div>
                   <div>
                     <dt>Sheet:</dt>
-                    <dd>75 x 50 mm portrait</dd>
+                    <dd>75 x 50 mm</dd>
                   </div>
                   <div>
                     <dt>Area:</dt>
-                    <dd>70 x 45 mm rotated</dd>
+                    <dd>70 x 45 mm</dd>
                   </div>
                   <div>
                     <dt>Check:</dt>
