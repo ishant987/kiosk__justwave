@@ -52,6 +52,14 @@ export const createPasses = async (payload: CreatePassPayload) => {
   return data;
 };
 
+export const markEntryPassesPaid = async (ids: string[], paymentMode: string) => {
+  const { data } = await httpClient.post('/entry-exit/passes/mark-paid', {
+    ids,
+    payment_mode: paymentMode
+  });
+  return data;
+};
+
 export const recordPrint = async (ids: string[]) => {
   const { data } = await httpClient.post('/entry-exit/passes/record-print', { ids });
   return data;

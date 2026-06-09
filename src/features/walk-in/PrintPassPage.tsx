@@ -26,13 +26,13 @@ export function PrintPassPage() {
   const { passIds, passes, phone, selectedChildren, newChildNames, durationPackage, location, resetDraft } = useWalkInStore();
   const autoPrintStarted = useRef(false);
   const mutation = useMutation({
-    mutationFn: () => recordPrint(passIds),
-    onSuccess: printTicket
+    mutationFn: () => recordPrint(passIds)
   });
 
   useEffect(() => {
     if (!passIds.length || autoPrintStarted.current) return;
     autoPrintStarted.current = true;
+    printTicket();
     mutation.mutate();
   }, [mutation, passIds.length]);
 
@@ -64,7 +64,7 @@ export function PrintPassPage() {
               <span className="section-icon ticket-icon">✓</span>
               <div>
                 <h3>Pass ready</h3>
-            
+                <p>The sticker is ready to print.</p>
               </div>
             </div>
             {mutation.isError ? <Toast tone="error">{getApiErrorMessage(mutation.error)}</Toast> : null}

@@ -43,15 +43,25 @@ interface KioskTextInputProps {
   label: string;
   value: string;
   placeholder?: string;
+  keyboardMode: KeyboardMode;
   active: boolean;
   onFocus: () => void;
 }
 
-function KioskTextInput({ fieldId, label, value, placeholder, active, onFocus }: KioskTextInputProps) {
+function KioskTextInput({ fieldId, label, value, placeholder, keyboardMode, active, onFocus }: KioskTextInputProps) {
   return (
     <label className={active ? 'field kiosk-text-field active' : 'field kiosk-text-field'} data-keyboard-field={fieldId}>
       <span>{label}</span>
-      <input type="text" inputMode="none" readOnly value={value} placeholder={placeholder} onFocus={onFocus} onClick={onFocus} />
+      <input
+        type="text"
+        inputMode={keyboardMode === 'number' ? 'numeric' : 'text'}
+        autoCapitalize={keyboardMode === 'text' ? 'words' : 'off'}
+        readOnly
+        value={value}
+        placeholder={placeholder}
+        onFocus={onFocus}
+        onClick={onFocus}
+      />
     </label>
   );
 }
@@ -272,6 +282,7 @@ export function WalkInPage() {
                 label="Parent name"
                 value={customerName}
                 placeholder="Enter parent name"
+                keyboardMode="text"
                 active={activeTextField?.type === 'parent'}
                 onFocus={() => openTextKeyboard({ type: 'parent' })}
               />
@@ -323,6 +334,7 @@ export function WalkInPage() {
                         label={`New child ${index + 1}`}
                         value={name}
                         placeholder="Enter child name"
+                        keyboardMode="text"
                         active={activeTextField?.type === 'child' && activeTextField.index === index}
                         onFocus={() => openTextKeyboard({ type: 'child', index })}
                       />
@@ -338,18 +350,28 @@ export function WalkInPage() {
               </>
             ) : null}
 
-            <Button
-              className="kiosk-primary"
-              type="button"
-              disabled={!canContinue}
-              onClick={() => {
-                setActiveTextField(null);
-                setKeyboardMode('none');
-                navigate('/walk-in/payment');
-              }}
-            >
-              Continue
-            </Button>
+            <div className="walk-actions">
+              <Button
+                type="button"
+                variant="secondary"
+                className="walk-test-button"
+                onClick={() => navigate('/walk-in/test-sticker')}
+              >
+                Test Sticker
+              </Button>
+              <Button
+                className="kiosk-primary"
+                type="button"
+                disabled={!canContinue}
+                onClick={() => {
+                  setActiveTextField(null);
+                  setKeyboardMode('none');
+                  navigate('/walk-in/payment');
+                }}
+              >
+                Continue
+              </Button>
+            </div>
             <p className="kiosk-footnote">{location?.name ?? 'Branch assigned at login'}</p>
           </section>
         </div>

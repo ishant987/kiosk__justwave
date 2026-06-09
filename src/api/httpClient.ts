@@ -58,6 +58,13 @@ export const getApiErrorMessage = (error: unknown) => {
     if (error.response?.status === 403) return 'You do not have permission to perform this action.';
     if (error.response?.status === 409) return 'This child already has an active pass or inside session. Please select another child.';
     if (error.response?.status === 422) return 'Please check the entered details.';
+    if (!error.response) {
+      return `Unable to reach the server at ${baseURL}. Check the API connection and try again.`;
+    }
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
   }
 
   return 'Something went wrong. Please try again.';

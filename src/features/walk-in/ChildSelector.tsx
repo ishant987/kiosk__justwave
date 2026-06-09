@@ -24,7 +24,12 @@ export function ChildSelector() {
   return (
     <section className="panel form-stack">
       {!parent ? (
-        <Input label="Parent name" value={customerName} onChange={(event) => updateDraft({ customerName: event.target.value })} />
+        <Input
+          label="Parent name"
+          value={customerName}
+          keyboardMode="text"
+          onChange={(event) => updateDraft({ customerName: event.target.value })}
+        />
       ) : null}
       {children.length ? (
         <div>
@@ -57,6 +62,7 @@ export function ChildSelector() {
               key={index}
               label={`Child ${index + 1}`}
               value={name}
+              keyboardMode="text"
               onChange={(event) => updateChildName(index, event.target.value)}
             />
           ))}

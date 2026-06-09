@@ -41,6 +41,7 @@ export function CustomerLookup() {
         <Input
           label="Parent phone"
           value={localPhone}
+          keyboardMode="number"
           onChange={(event) => setLocalPhone(event.target.value.replace(/\D/g, '').slice(0, 10))}
           inputMode="numeric"
           placeholder="10 digit mobile"

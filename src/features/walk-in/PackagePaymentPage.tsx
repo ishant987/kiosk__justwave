@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Navigate, useNavigate } from 'react-router';
-import { createPasses, getDurationPrices } from '../../api/entryExit.api';
+import { createPasses, getDurationPrices, markEntryPassesPaid } from '../../api/entryExit.api';
 import { getApiErrorMessage, isConflictError, isDuplicateParentPhoneError } from '../../api/httpClient';
 import { createEntryPassRazorpayOrder, verifyEntryPassRazorpayPayment } from '../../api/payments.api';
 import { Button } from '../../components/Button';
@@ -14,12 +14,56 @@ import { useWalkInStore } from './walkIn.store';
 
 const paymentMethods = [
   { id: 'upi', label: 'UPI', detail: 'Pay using any UPI App' },
-  { id: 'card', label: 'Card', detail: 'Debit / Credit Card' }
-];
+  { id: 'card', label: 'Card', detail: 'Debit / Credit Card' },
+  { id: 'cash', label: 'Cash', detail: 'Collect cash at the desk, then print the sticker' }
+] as const;
 
 const packageMinutes = (item: DurationPackage) => item.duration_minutes ?? (Number.parseInt(item.name ?? item.label ?? '0', 10) || 0);
 const packagePrice = (item?: DurationPackage) => item?.price ?? item?.amount ?? 0;
 type PaymentMethodId = (typeof paymentMethods)[number]['id'];
+
+const toPassArray = (value: unknown): EntryPass[] => {
+  if (Array.isArray(value)) return value as EntryPass[];
+  if (!value || typeof value !== 'object') return [];
+
+  const payload = value as {
+    data?: unknown;
+    passes?: unknown;
+    pass?: unknown;
+    payment?: { data?: unknown; passes?: unknown; pass?: unknown; ids?: string[] };
+  };
+
+  const candidates = [
+    payload.passes,
+    payload.data,
+    payload.payment?.passes,
+    payload.payment?.data
+  ];
+
+  for (const candidate of candidates) {
+    const normalized = toPassArray(candidate);
+    if (normalized.length) return normalized;
+  }
+
+  if (payload.pass && typeof payload.pass === 'object') return [payload.pass as EntryPass];
+  if (payload.payment?.pass && typeof payload.payment.pass === 'object') return [payload.payment.pass as EntryPass];
+
+  return [];
+};
+
+const normalizePasses = (result: unknown) => toPassArray(result);
+
+const normalizePassIds = (result: unknown, passes: unknown) => {
+  const passList = Array.isArray(passes) ? (passes as EntryPass[]) : [];
+
+  if (!result || typeof result !== 'object') return passList.map((pass) => pass.id);
+  const payload = result as {
+    ids?: string[];
+    payment?: { ids?: string[]; data?: unknown; passes?: unknown };
+  };
+
+  return payload.payment?.ids ?? payload.ids ?? passList.map((pass) => pass.id);
+};
 
 const getRazorpayCheckoutConfig = (order: unknown) => {
   if (order && typeof order === 'object' && 'data' in order) {
@@ -27,15 +71,26 @@ const getRazorpayCheckoutConfig = (order: unknown) => {
   }
   return order;
 };
+
 const razorpayMethodFor = (methodId: PaymentMethodId) => ({
   upi: methodId === 'upi',
   card: methodId === 'card'
 });
 
+const paymentActionLabel = (methodId: PaymentMethodId, total: number) => {
+  if (methodId === 'cash') return `Print Sticker Rs. ${total.toFixed(2)}`;
+  return `Pay Now Rs. ${total.toFixed(2)}`;
+};
+
+const paymentPendingLabel = (methodId: PaymentMethodId) => {
+  if (methodId === 'cash') return 'Printing sticker...';
+  return 'Opening Razorpay...';
+};
+
 export function PackagePaymentPage() {
   const navigate = useNavigate();
   const draft = useWalkInStore();
-  const [selectedMethod, setSelectedMethod] = useState('upi');
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodId>('upi');
   const [message, setMessage] = useState<string | null>(null);
   const durationQuery = useQuery({ queryKey: ['duration-prices'], queryFn: getDurationPrices });
 
@@ -66,12 +121,23 @@ export function PackagePaymentPage() {
           child_names: newNames.length ? newNames : undefined
         });
 
-        passes = result.passes ?? result.data ?? (result.pass ? [result.pass] : []);
-        ids = result.payment?.ids ?? result.ids ?? passes.map((pass: EntryPass) => pass.id);
+        passes = normalizePasses(result);
+        ids = normalizePassIds(result, passes);
         draft.updateDraft({ passes, passIds: ids });
       }
 
       if (!ids.length) throw new Error('No pass ids returned by backend.');
+
+      if (methodId === 'cash') {
+        const paymentResult = await markEntryPassesPaid(ids, methodId);
+        const paidPasses = normalizePasses(paymentResult);
+        if (paidPasses.length) {
+          passes = paidPasses;
+        }
+        ids = normalizePassIds(paymentResult, passes);
+        draft.updateDraft({ passes, passIds: ids });
+        return { passes, ids };
+      }
 
       const order = await createEntryPassRazorpayOrder(ids);
       const razorpayPayload = await openRazorpayCheckout({
@@ -188,7 +254,7 @@ export function PackagePaymentPage() {
               <span className="section-icon wallet-icon">3</span>
               <div>
                 <h3>Choose payment method</h3>
-                <p>All options open Razorpay Checkout</p>
+                <p>UPI and card use Razorpay, cash is marked at the desk and prints the sticker</p>
               </div>
             </div>
             <div className="pay-method-grid">
@@ -201,7 +267,13 @@ export function PackagePaymentPage() {
                   onClick={() => startPayment(method.id)}
                 >
                   <strong>{method.label}</strong>
-                  <span>{payMutation.isPending && selectedMethod === method.id ? 'Opening test checkout...' : method.detail}</span>
+                  <span>
+                    {payMutation.isPending && selectedMethod === method.id
+                      ? method.id === 'cash'
+                        ? 'Marking cash payment and preparing the sticker...'
+                        : 'Opening test checkout...'
+                      : method.detail}
+                  </span>
                 </button>
               ))}
             </div>
@@ -217,10 +289,10 @@ export function PackagePaymentPage() {
               disabled={!selectedPackage || payMutation.isPending}
               onClick={() => startPayment(selectedMethod)}
             >
-              {payMutation.isPending ? 'Opening Razorpay...' : `Pay Now Rs. ${total.toFixed(2)}`}
+              {payMutation.isPending ? paymentPendingLabel(selectedMethod) : paymentActionLabel(selectedMethod, total)}
             </Button>
           </div>
-          <p className="kiosk-footnote">100% secure payments | Instant pass</p>
+          <p className="kiosk-footnote">100% secure payments | Cash, UPI and card supported</p>
         </section>
       </section>
     </main>
