@@ -1,29 +1,58 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router';
 import { Button } from '../../components/Button';
+import { Toast } from '../../components/Toast';
 import pageTwoArt from '../../public/hhh.webp';
 
-const AUTO_PRINT_DELAY_MS = 300;
 const TEST_QR_VALUE = 'JUSTWAVE-TEST-STICKER';
 const TEST_QR_SIZE_PX = 150;
 
-const printTicket = () => {
-  window.requestAnimationFrame(() => {
-    window.setTimeout(() => window.print(), AUTO_PRINT_DELAY_MS);
-  });
-};
-
 export function TestStickerPage() {
   const navigate = useNavigate();
-  const autoPrintStarted = useRef(false);
+  const ticketRef = useRef<HTMLElement>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!autoPrintStarted.current) {
-      autoPrintStarted.current = true;
-      printTicket();
+  const openExactPdf = async () => {
+    if (!ticketRef.current || isGeneratingPdf) return;
+
+    const pdfWindow = window.open('', '_blank');
+    setIsGeneratingPdf(true);
+    setPdfError(null);
+
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
+      const canvas = await html2canvas(ticketRef.current, {
+        backgroundColor: '#ffffff',
+        scale: 4,
+        logging: false,
+        useCORS: true
+      });
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [75, 50],
+        compress: true
+      });
+
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 75, 50, undefined, 'FAST');
+      const pdfUrl = URL.createObjectURL(pdf.output('blob'));
+
+      if (pdfWindow) {
+        pdfWindow.location.replace(pdfUrl);
+      } else {
+        window.location.assign(pdfUrl);
+      }
+
+      window.setTimeout(() => URL.revokeObjectURL(pdfUrl), 60_000);
+    } catch {
+      pdfWindow?.close();
+      setPdfError('Unable to create the PDF. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
     }
-  }, []);
+  };
 
   return (
     <main className="kiosk-stage test-sticker-page">
@@ -33,18 +62,19 @@ export function TestStickerPage() {
         </div>
 
         <section className="ticket-sheet thermal-preview-sheet">
+          {pdfError ? <Toast tone="error">{pdfError}</Toast> : null}
           <section className="thermal-preview-header no-print">
               <div className="kiosk-section-title compact-title">
               <span className="section-icon ticket-icon">T</span>
               <div>
                 <h3>Test sticker ready</h3>
-                <p>The printer dialog will open with the same `75mm x 50mm` full-bleed sheet as the pass ticket.</p>
+                <p>The PDF opens at the exact `75mm x 50mm` size without A4 whitespace or rotation.</p>
               </div>
             </div>
           </section>
 
           <section className="thermal-print-area">
-            <article className="thermal-label test-thermal-label">
+            <article className="thermal-label test-thermal-label" ref={ticketRef}>
               <div className="thermal-label-info">
                 <div className="thermal-label-copy">
                   <p className="thermal-brand">JUSTWAVE</p>
@@ -82,8 +112,8 @@ export function TestStickerPage() {
             <Button type="button" variant="secondary" onClick={() => navigate('/walk-in', { replace: true })}>
               Back
             </Button>
-            <Button type="button" className="kiosk-primary" onClick={printTicket}>
-              Print Again
+            <Button type="button" className="kiosk-primary" disabled={isGeneratingPdf} onClick={openExactPdf}>
+              {isGeneratingPdf ? 'Creating PDF...' : 'Open Exact PDF'}
             </Button>
           </div>
         </section>
