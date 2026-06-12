@@ -5,7 +5,6 @@ import { Button } from '../../components/Button';
 import pageTwoArt from '../../public/hhh.webp';
 
 const AUTO_PRINT_DELAY_MS = 300;
-const TEST_STICKER_PRINT_STYLE_ID = 'test-sticker-print-style';
 const TEST_QR_VALUE = 'JUSTWAVE-TEST-STICKER';
 const TEST_QR_SIZE_PX = 150;
 
@@ -20,55 +19,10 @@ export function TestStickerPage() {
   const autoPrintStarted = useRef(false);
 
   useEffect(() => {
-    const style = document.createElement('style');
-    style.id = TEST_STICKER_PRINT_STYLE_ID;
-    style.textContent = `
-      @page {
-        size: 75mm 50mm;
-        margin: 0;
-      }
-
-      @media print {
-        html,
-        body,
-        #root {
-          width: 75mm;
-          min-width: 75mm;
-        }
-
-        .test-sticker-page,
-        .test-sticker-page .ticket-device,
-        .test-sticker-page .ticket-sheet,
-        .test-sticker-page .thermal-preview-sheet,
-        .test-sticker-page .thermal-print-area {
-          width: 75mm;
-        }
-
-        .test-sticker-page .test-thermal-label {
-          width: 75mm;
-          height: 50mm;
-          min-height: 50mm;
-          margin: 0;
-          page-break-after: auto;
-          break-after: auto;
-        }
-
-        .test-sticker-page .thermal-print-area {
-          padding: 0;
-          justify-items: stretch;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-
     if (!autoPrintStarted.current) {
       autoPrintStarted.current = true;
       printTicket();
     }
-
-    return () => {
-      style.remove();
-    };
   }, []);
 
   return (

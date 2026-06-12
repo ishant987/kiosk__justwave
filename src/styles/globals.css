@@ -1690,12 +1690,23 @@ a {
   margin: 0;
 }
 
+@page pass-ticket {
+  size: 75mm 50mm;
+  margin: 0;
+}
+
 @media print {
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
   html,
   body,
   #root {
-    width: 75mm;
-    min-width: 75mm;
+    width: 75mm !important;
+    min-width: 75mm !important;
+    max-width: 75mm !important;
     height: auto;
     min-height: 0;
     margin: 0;
@@ -1709,7 +1720,9 @@ a {
   .thermal-preview-sheet,
   .thermal-print-area {
     display: block;
-    width: 75mm;
+    width: 75mm !important;
+    min-width: 75mm !important;
+    max-width: 75mm !important;
     min-height: 0;
     height: auto;
     margin: 0;
@@ -1736,17 +1749,23 @@ a {
   }
 
   .thermal-label {
-    width: 75mm;
-    height: 50mm;
-    min-height: 50mm;
-    max-height: 50mm;
-    margin: 0;
+    page: pass-ticket;
+    display: grid !important;
+    width: 75mm !important;
+    min-width: 75mm !important;
+    max-width: 75mm !important;
+    height: 50mm !important;
+    min-height: 50mm !important;
+    max-height: 50mm !important;
+    margin: 0 !important;
     border-width: 1px;
     page-break-after: always;
     break-after: page;
     box-shadow: none;
     box-sizing: border-box;
     overflow: hidden;
+    scale: 1;
+    transform: none !important;
   }
 
   .thermal-label:last-child {
@@ -1755,8 +1774,9 @@ a {
   }
 
   .thermal-print-area {
-    justify-items: center;
-    padding: 0;
+    padding: 0 !important;
+    transform: none !important;
+    zoom: 1;
   }
 }
 
