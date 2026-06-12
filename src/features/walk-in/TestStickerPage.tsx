@@ -5,7 +5,6 @@ import { Button } from '../../components/Button';
 import pageTwoArt from '../../public/hhh.webp';
 
 const AUTO_PRINT_DELAY_MS = 300;
-const TEST_PDF_PRINT_STYLE_ID = 'test-pdf-print-style';
 const TEST_QR_VALUE = 'JUSTWAVE-TEST-STICKER';
 const TEST_QR_SIZE_PX = 150;
 
@@ -20,55 +19,10 @@ export function TestStickerPage() {
   const autoPrintStarted = useRef(false);
 
   useEffect(() => {
-    const style = document.createElement('style');
-    style.id = TEST_PDF_PRINT_STYLE_ID;
-    style.textContent = `
-      @page {
-        size: A4 portrait;
-        margin: 0;
-      }
-
-      @media print {
-        .test-sticker-page,
-        .test-sticker-page .ticket-device,
-        .test-sticker-page .ticket-sheet,
-        .test-sticker-page .thermal-preview-sheet,
-        .test-sticker-page .thermal-print-area {
-          width: 210mm !important;
-          min-width: 210mm !important;
-          max-width: 210mm !important;
-          height: 297mm !important;
-          min-height: 297mm !important;
-          max-height: 297mm !important;
-        }
-
-        .test-sticker-page .thermal-print-area {
-          display: flex !important;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .test-sticker-page .test-thermal-label {
-          width: 75mm !important;
-          min-width: 75mm !important;
-          max-width: 75mm !important;
-          height: 50mm !important;
-          min-height: 50mm !important;
-          max-height: 50mm !important;
-          transform: none !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-
     if (!autoPrintStarted.current) {
       autoPrintStarted.current = true;
       printTicket();
     }
-
-    return () => {
-      style.remove();
-    };
   }, []);
 
   return (
@@ -84,7 +38,7 @@ export function TestStickerPage() {
               <span className="section-icon ticket-icon">T</span>
               <div>
                 <h3>Test sticker ready</h3>
-                <p>The PDF preview uses A4 portrait with the `75mm x 50mm` test ticket centered.</p>
+                <p>The printer dialog will open with the same `75mm x 50mm` full-bleed sheet as the pass ticket.</p>
               </div>
             </div>
           </section>
