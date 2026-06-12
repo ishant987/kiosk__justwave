@@ -1690,11 +1690,6 @@ a {
   margin: 0;
 }
 
-@page pass-ticket {
-  size: 75mm 50mm;
-  margin: 0;
-}
-
 @media print {
   * {
     print-color-adjust: exact;
@@ -1749,7 +1744,6 @@ a {
   }
 
   .thermal-label {
-    page: pass-ticket;
     display: grid !important;
     width: 75mm !important;
     min-width: 75mm !important;
