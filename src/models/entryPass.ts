@@ -27,6 +27,7 @@ export interface CreatePassPayload {
   customer_name?: string;
   child_count?: number;
   child_names?: string[];
+  payment_mode?: 'cash' | 'razorpay';
 }
 
 export interface EntryPassCreateResult {

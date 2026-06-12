@@ -6,7 +6,7 @@ export const createEntryPassRazorpayOrder = async (ids: string[]) => {
   return data;
 };
 
-export const verifyEntryPassRazorpayPayment = async (payload: RazorpaySuccessPayload & { ids: string[] }) => {
+export const verifyEntryPassRazorpayPayment = async (payload: RazorpaySuccessPayload & { ids?: string[] }) => {
   const { data } = await httpClient.post('/entry-exit/passes/razorpay-verify', payload);
   return data;
 };

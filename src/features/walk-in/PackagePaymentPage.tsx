@@ -23,7 +23,11 @@ const packagePrice = (item?: DurationPackage) => item?.price ?? item?.amount ?? 
 type PaymentMethodId = (typeof paymentMethods)[number]['id'];
 
 const toPassArray = (value: unknown): EntryPass[] => {
-  if (Array.isArray(value)) return value as EntryPass[];
+  if (Array.isArray(value)) {
+    return value.filter(
+      (item): item is EntryPass => Boolean(item && typeof item === 'object' && typeof (item as EntryPass).id === 'string')
+    );
+  }
   if (!value || typeof value !== 'object') return [];
 
   const payload = value as {
@@ -53,16 +57,33 @@ const toPassArray = (value: unknown): EntryPass[] => {
 
 const normalizePasses = (result: unknown) => toPassArray(result);
 
-const normalizePassIds = (result: unknown, passes: unknown) => {
-  const passList = Array.isArray(passes) ? (passes as EntryPass[]) : [];
+const toIdArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) return [];
+  return value.filter((id): id is string => typeof id === 'string' && id.length > 0);
+};
 
-  if (!result || typeof result !== 'object') return passList.map((pass) => pass.id);
-  const payload = result as {
-    ids?: string[];
-    payment?: { ids?: string[]; data?: unknown; passes?: unknown };
-  };
+const normalizePassIds = (result: unknown, passes: EntryPass[]): string[] => {
+  if (result && typeof result === 'object') {
+    const payload = result as {
+      data?: unknown;
+      ids?: unknown;
+      pass_ids?: unknown;
+      payment?: { ids?: unknown; pass_ids?: unknown };
+    };
+    const candidates = [payload.payment?.ids, payload.payment?.pass_ids, payload.ids, payload.pass_ids];
 
-  return payload.payment?.ids ?? payload.ids ?? passList.map((pass) => pass.id);
+    for (const candidate of candidates) {
+      const ids = toIdArray(candidate);
+      if (ids.length) return ids;
+    }
+
+    if (payload.data && payload.data !== result) {
+      const nestedIds: string[] = normalizePassIds(payload.data, []);
+      if (nestedIds.length) return nestedIds;
+    }
+  }
+
+  return passes.map((pass) => pass.id).filter(Boolean);
 };
 
 const getRazorpayCheckoutConfig = (order: unknown) => {
@@ -110,7 +131,7 @@ export function PackagePaymentPage() {
 
       if (!ids.length) {
         const newNames = draft.newChildNames.map((name) => name.trim()).filter(Boolean);
-        const result = await createPasses({
+        const passPayload = {
           location_id: draft.location.id,
           phone: draft.phone,
           duration_price_id: draft.durationPackage.id,
@@ -119,11 +140,32 @@ export function PackagePaymentPage() {
           customer_name: draft.parent ? undefined : draft.customerName,
           child_count: draft.parent ? undefined : newNames.length,
           child_names: newNames.length ? newNames : undefined
-        });
+        };
 
-        passes = normalizePasses(result);
-        ids = normalizePassIds(result, passes);
+        if (methodId === 'cash') {
+          const result = await createPasses({ ...passPayload, payment_mode: 'cash' });
+          passes = normalizePasses(result);
+          ids = normalizePassIds(result, passes);
+          if (!ids.length) throw new Error('No pass ids returned by backend.');
+
+          draft.updateDraft({ passes, passIds: ids });
+          return { passes, ids };
+        }
+
+        const order = await createPasses({ ...passPayload, payment_mode: 'razorpay' });
+        const razorpayPayload = await openRazorpayCheckout({
+          ...(getRazorpayCheckoutConfig(order) ?? {}),
+          description: `${methodId.toUpperCase()} walk-in pass payment`,
+          prefill: { contact: draft.phone, name: draft.customerName || draft.parent?.name },
+          method: razorpayMethodFor(methodId)
+        });
+        const verificationResult = await verifyEntryPassRazorpayPayment(razorpayPayload);
+        passes = normalizePasses(verificationResult);
+        ids = normalizePassIds(verificationResult, passes);
+        if (!ids.length) throw new Error('Payment succeeded, but no pass ids were returned by backend.');
+
         draft.updateDraft({ passes, passIds: ids });
+        return { passes, ids };
       }
 
       if (!ids.length) throw new Error('No pass ids returned by backend.');
@@ -146,7 +188,12 @@ export function PackagePaymentPage() {
         prefill: { contact: draft.phone, name: draft.customerName || draft.parent?.name },
         method: razorpayMethodFor(methodId)
       });
-      await verifyEntryPassRazorpayPayment({ ...razorpayPayload, ids });
+      const verificationResult = await verifyEntryPassRazorpayPayment({ ...razorpayPayload, ids });
+      const paidPasses = normalizePasses(verificationResult);
+      if (paidPasses.length) {
+        passes = paidPasses;
+      }
+      ids = normalizePassIds(verificationResult, passes);
 
       return { passes, ids };
     },
