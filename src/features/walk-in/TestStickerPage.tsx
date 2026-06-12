@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router';
 import { Button } from '../../components/Button';
 import pageTwoArt from '../../public/hhh.webp';
 
 const AUTO_PRINT_DELAY_MS = 300;
 const TEST_STICKER_PRINT_STYLE_ID = 'test-sticker-print-style';
+const TEST_QR_VALUE = 'JUSTWAVE-TEST-STICKER';
+const TEST_QR_SIZE_PX = 150;
 
 const printTicket = () => {
   window.requestAnimationFrame(() => {
@@ -21,7 +24,7 @@ export function TestStickerPage() {
     style.id = TEST_STICKER_PRINT_STYLE_ID;
     style.textContent = `
       @page {
-        size: 3in 2in;
+        size: 75mm 50mm;
         margin: 0;
       }
 
@@ -29,8 +32,8 @@ export function TestStickerPage() {
         html,
         body,
         #root {
-          width: 3in;
-          min-width: 3in;
+          width: 75mm;
+          min-width: 75mm;
         }
 
         .test-sticker-page,
@@ -38,16 +41,21 @@ export function TestStickerPage() {
         .test-sticker-page .ticket-sheet,
         .test-sticker-page .thermal-preview-sheet,
         .test-sticker-page .thermal-print-area {
-          width: 3in;
+          width: 75mm;
         }
 
         .test-sticker-page .test-thermal-label {
-          width: 3in;
-          height: 2in;
-          min-height: 2in;
+          width: 75mm;
+          height: 50mm;
+          min-height: 50mm;
           margin: 0;
           page-break-after: auto;
           break-after: auto;
+        }
+
+        .test-sticker-page .thermal-print-area {
+          padding: 0;
+          justify-items: stretch;
         }
       }
     `;
@@ -72,11 +80,11 @@ export function TestStickerPage() {
 
         <section className="ticket-sheet thermal-preview-sheet">
           <section className="thermal-preview-header no-print">
-            <div className="kiosk-section-title compact-title">
+              <div className="kiosk-section-title compact-title">
               <span className="section-icon ticket-icon">T</span>
               <div>
                 <h3>Test sticker ready</h3>
-                <p>The printer dialog will open with the same `3in x 2in` landscape setup as the pass ticket.</p>
+                <p>The printer dialog will open with the same `75mm x 50mm` full-bleed sheet as the pass ticket.</p>
               </div>
             </div>
           </section>
@@ -84,7 +92,11 @@ export function TestStickerPage() {
           <section className="thermal-print-area">
             <article className="thermal-label test-thermal-label">
               <div className="thermal-label-info">
-                <h2>JUSTWAVE</h2>
+                <div className="thermal-label-copy">
+                  <p className="thermal-brand">JUSTWAVE</p>
+                  <p className="thermal-pass-type">Printer Test</p>
+                </div>
+                <h2>QR Check</h2>
                 <dl>
                   <div>
                     <dt>Type:</dt>
@@ -92,21 +104,22 @@ export function TestStickerPage() {
                   </div>
                   <div>
                     <dt>Sheet:</dt>
-                    <dd>3in x 2in</dd>
+                    <dd>75mm x 50mm</dd>
                   </div>
                   <div>
                     <dt>Area:</dt>
-                    <dd>Landscape feed</dd>
+                    <dd>Full bleed</dd>
                   </div>
                   <div>
                     <dt>Check:</dt>
-                    <dd>Alignment and margins</dd>
+                    <dd>QR and margins</dd>
                   </div>
                 </dl>
               </div>
               <div className="thermal-label-qr test-thermal-mark">
-                <strong>TEST</strong>
-                <span>PRINT</span>
+                <span className="thermal-print-badge">TEST</span>
+                <QRCodeSVG value={TEST_QR_VALUE} size={TEST_QR_SIZE_PX} level="H" includeMargin={false} />
+                <strong>DEMO</strong>
               </div>
             </article>
           </section>
