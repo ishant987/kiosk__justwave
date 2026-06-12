@@ -1427,18 +1427,160 @@ a {
 
 .thermal-label {
   width: 75mm;
-  min-height: 50mm;
+  height: 50mm;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 29mm;
+  grid-template-columns: 46.5mm 28.5mm;
   gap: 0;
-  border: 1.5px solid #111827;
+  border: 0;
   background: #ffffff;
-  color: #111827;
+  color: #000000;
   box-sizing: border-box;
   break-inside: avoid;
   page-break-inside: avoid;
   font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
+}
+
+.pass-ticket-main {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  padding: 3.2mm 3.7mm 3mm 4.1mm;
+  overflow: hidden;
+}
+
+.pass-ticket-heading {
+  display: grid;
+  justify-items: start;
+  gap: 1.1mm;
+}
+
+.pass-ticket-brand,
+.pass-ticket-badge,
+.pass-ticket-admission p,
+.pass-ticket-print-count {
+  margin: 0;
+}
+
+.pass-ticket-brand {
+  font-size: 18pt;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
+}
+
+.pass-ticket-badge {
+  min-width: 22mm;
+  border: 0.45mm solid #000000;
+  border-radius: 2.1mm;
+  padding: 0.7mm 2.2mm 0.65mm;
+  font-size: 7.5pt;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+.pass-ticket-admission {
+  align-self: start;
+  margin-top: 2.5mm;
+  min-width: 0;
+}
+
+.pass-ticket-admission p {
+  font-size: 8.5pt;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pass-ticket-admission h2 {
+  margin: 1mm 0 0;
+  max-width: 38mm;
+  font-size: 19pt;
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.pass-ticket-details {
+  align-self: end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  gap: 2.2mm 3mm;
+  margin: 2mm 0 0;
+}
+
+.pass-ticket-details div {
+  min-width: 0;
+}
+
+.pass-ticket-details dt,
+.pass-ticket-details dd {
+  margin: 0;
+  color: #000000;
+}
+
+.pass-ticket-details dt {
+  margin-bottom: 0.65mm;
+  font-size: 6.25pt;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pass-ticket-details dd {
+  max-width: 100%;
+  font-size: 8.25pt;
+  font-weight: 900;
+  line-height: 1.05;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pass-ticket-stub {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  align-items: center;
+  border-left: 0.45mm dashed #111111;
+  padding: 2mm 2.7mm 3mm;
+  overflow: hidden;
+}
+
+.pass-ticket-print-count {
+  justify-self: end;
+  font-size: 7.5pt;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pass-ticket-qr-frame {
+  width: 23.5mm;
+  height: 23.5mm;
+  display: grid;
+  place-items: center;
+  align-self: end;
+  margin-bottom: 1.5mm;
+  border: 0.45mm solid #111111;
+  border-radius: 2mm;
+  padding: 1.25mm;
+  overflow: hidden;
+}
+
+.pass-ticket-qr-frame svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pass-ticket-code {
+  max-width: 100%;
+  font-size: 7pt;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.2mm;
+  white-space: nowrap;
 }
 
 .thermal-label-info {

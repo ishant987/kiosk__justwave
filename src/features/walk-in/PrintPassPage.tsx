@@ -14,20 +14,16 @@ const shortId = (value: string) => value.replace(/-/g, '').slice(0, 8).toUpperCa
 const minutesFromPackage = (value?: { duration_minutes?: number; name?: string; label?: string }) =>
   value?.duration_minutes ?? (Number.parseInt(value?.name ?? value?.label ?? '0', 10) || 0);
 const AUTO_PRINT_DELAY_MS = 300;
-const QR_PRINT_SIZE_PX = 173;
+const QR_PRINT_SIZE_PX = 190;
 
-const formatIssuedAt = (value?: string) => {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return new Intl.DateTimeFormat('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).format(date);
+const formatDuration = (minutes: number) => {
+  if (!minutes) return '-';
+  if (minutes % 60 === 0) return `${minutes / 60}h`;
+  return `${minutes} mins`;
 };
+
+const formatAmount = (amount: number) =>
+  `Rs.${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(amount)}`;
 
 const printTicket = () => {
   window.requestAnimationFrame(() => {
@@ -37,7 +33,17 @@ const printTicket = () => {
 
 export function PrintPassPage() {
   const navigate = useNavigate();
-  const { passIds, passes, phone, selectedChildren, newChildNames, durationPackage, location, resetDraft } = useWalkInStore();
+  const {
+    passIds,
+    passes,
+    phone,
+    parent,
+    customerName,
+    selectedChildren,
+    newChildNames,
+    durationPackage,
+    resetDraft
+  } = useWalkInStore();
   const autoPrintStarted = useRef(false);
   const mutation = useMutation({
     mutationFn: () => recordPrint(passIds)
@@ -91,52 +97,46 @@ export function PrintPassPage() {
               const childName = pass.child_name ?? childNames[index] ?? childNames[0] ?? 'JUSTWAVE';
               const amount = pass.bill_total_amount ?? pass.amount ?? pass.pass_price ?? packagePrice;
               const duration = pass.expected_duration_minutes ?? durationMinutes;
-              const issuedAt = formatIssuedAt(pass.issued_at ?? pass.paid_at);
-              const hostName = pass.parent_name ?? pass.customer_name ?? 'Walk-in Guest';
-              const branchName = pass.location_name ?? location?.name ?? 'JustWave';
-              const passType = pass.entry_type?.replaceAll('_', ' ') ?? 'Walk-in Pass';
-              const printCount = pass.print_count ?? 0;
+              const guardianName = pass.parent_name ?? pass.customer_name ?? parent?.name ?? customerName ?? 'Walk-in Guest';
+              const printCount = (pass.print_count ?? 0) + 1;
 
               return (
-                <article className="thermal-label" key={pass.id}>
-                  <div className="thermal-label-info">
-                    <div className="thermal-label-copy">
-                      <p className="thermal-brand">JUSTWAVE</p>
-                      <p className="thermal-pass-type">{passType}</p>
+                <article className="thermal-label pass-ticket" key={pass.id}>
+                  <section className="pass-ticket-main">
+                    <div className="pass-ticket-heading">
+                      <p className="pass-ticket-brand">JUSTWAVE</p>
+                      <p className="pass-ticket-badge">CHILD PASS</p>
                     </div>
-                    <h2>{childName}</h2>
-                    <dl>
+                    <div className="pass-ticket-admission">
+                      <p>ADMIT ONE</p>
+                      <h2>{childName}</h2>
+                    </div>
+                    <dl className="pass-ticket-details">
                       <div>
-                        <dt>Issued</dt>
-                        <dd>{issuedAt ?? 'Ready now'}</dd>
+                        <dt>TIME / DURATION</dt>
+                        <dd>{formatDuration(duration)}</dd>
                       </div>
                       <div>
-                        <dt>Duration</dt>
-                        <dd>{duration ? `${duration} mins` : '-'}</dd>
+                        <dt>AMOUNT</dt>
+                        <dd>{formatAmount(Number(amount))}</dd>
                       </div>
                       <div>
-                        <dt>Amount</dt>
-                        <dd>Rs. {Number(amount).toFixed(2)}</dd>
+                        <dt>GUARDIAN</dt>
+                        <dd>{guardianName}</dd>
                       </div>
                       <div>
-                        <dt>Guest</dt>
-                        <dd>{hostName}</dd>
-                      </div>
-                      <div>
-                        <dt>Branch</dt>
-                        <dd>{branchName}</dd>
-                      </div>
-                      <div>
-                        <dt>Phone</dt>
+                        <dt>PHONE</dt>
                         <dd>{phone}</dd>
                       </div>
                     </dl>
-                  </div>
-                  <div className="thermal-label-qr">
-                    <span className="thermal-print-badge">Print {printCount}</span>
-                    <QRCodeSVG value={qrValue} size={QR_PRINT_SIZE_PX} level="H" includeMargin={false} />
-                    <strong>{ref}</strong>
-                  </div>
+                  </section>
+                  <section className="pass-ticket-stub">
+                    <p className="pass-ticket-print-count">PRINTED {printCount}X</p>
+                    <div className="pass-ticket-qr-frame">
+                      <QRCodeSVG value={qrValue} size={QR_PRINT_SIZE_PX} level="H" includeMargin={false} />
+                    </div>
+                    <strong className="pass-ticket-code">{ref.split('').join(' ')}</strong>
+                  </section>
                 </article>
               );
             })}
