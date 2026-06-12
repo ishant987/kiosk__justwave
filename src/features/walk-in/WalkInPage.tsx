@@ -352,14 +352,6 @@ export function WalkInPage() {
 
             <div className="walk-actions">
               <Button
-                type="button"
-                variant="secondary"
-                className="walk-test-button"
-                onClick={() => navigate('/walk-in/test-sticker')}
-              >
-                Test Sticker
-              </Button>
-              <Button
                 className="kiosk-primary"
                 type="button"
                 disabled={!canContinue}
