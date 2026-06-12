@@ -132,10 +132,12 @@ export function PrintPassPage() {
                   </section>
                   <section className="pass-ticket-stub">
                     <p className="pass-ticket-print-count">PRINTED {printCount}X</p>
-                    <div className="pass-ticket-qr-frame">
-                      <QRCodeSVG value={qrValue} size={QR_PRINT_SIZE_PX} level="H" includeMargin={false} />
+                    <div className="pass-ticket-qr-group">
+                      <div className="pass-ticket-qr-frame">
+                        <QRCodeSVG value={qrValue} size={QR_PRINT_SIZE_PX} level="H" includeMargin={false} />
+                      </div>
+                      <strong className="pass-ticket-code">{ref.split('').join(' ')}</strong>
                     </div>
-                    <strong className="pass-ticket-code">{ref.split('').join(' ')}</strong>
                   </section>
                 </article>
               );

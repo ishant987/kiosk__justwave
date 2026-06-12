@@ -1540,9 +1540,8 @@ a {
 .pass-ticket-stub {
   min-width: 0;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   justify-items: center;
-  align-items: center;
   border-left: 0.45mm dashed #111111;
   padding: 2mm 2.7mm 3mm;
   overflow: hidden;
@@ -1555,13 +1554,18 @@ a {
   line-height: 1;
 }
 
+.pass-ticket-qr-group {
+  align-self: center;
+  display: grid;
+  justify-items: center;
+  gap: 1.5mm;
+}
+
 .pass-ticket-qr-frame {
   width: 23.5mm;
   height: 23.5mm;
   display: grid;
   place-items: center;
-  align-self: end;
-  margin-bottom: 1.5mm;
   border: 0.45mm solid #111111;
   border-radius: 2mm;
   padding: 1.25mm;
