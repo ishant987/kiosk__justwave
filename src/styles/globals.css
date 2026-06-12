@@ -1704,6 +1704,7 @@ a {
     max-width: 75mm !important;
     height: auto;
     min-height: 0;
+    max-height: none;
     margin: 0;
     padding: 0;
     background: #ffffff;
