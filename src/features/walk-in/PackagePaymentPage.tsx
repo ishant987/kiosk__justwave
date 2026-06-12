@@ -14,13 +14,12 @@ import { useWalkInStore } from './walkIn.store';
 
 const paymentMethods = [
   { id: 'upi', label: 'UPI', detail: 'Pay using any UPI App' },
-  { id: 'card', label: 'Card', detail: 'Debit / Credit Card' },
-  { id: 'cash', label: 'Cash', detail: 'Collect cash at the desk, then print the sticker' }
+  { id: 'card', label: 'Card', detail: 'Debit / Credit Card' }
 ] as const;
 
 const packageMinutes = (item: DurationPackage) => item.duration_minutes ?? (Number.parseInt(item.name ?? item.label ?? '0', 10) || 0);
 const packagePrice = (item?: DurationPackage) => item?.price ?? item?.amount ?? 0;
-type PaymentMethodId = (typeof paymentMethods)[number]['id'];
+type PaymentMethodId = (typeof paymentMethods)[number]['id'] | 'cash';
 
 const toPassArray = (value: unknown): EntryPass[] => {
   if (Array.isArray(value)) {
@@ -301,7 +300,7 @@ export function PackagePaymentPage() {
               <span className="section-icon wallet-icon">3</span>
               <div>
                 <h3>Choose payment method</h3>
-                <p>UPI and card use Razorpay, cash is marked at the desk and prints the sticker</p>
+                <p>Pay securely using UPI or card</p>
               </div>
             </div>
             <div className="pay-method-grid">
@@ -316,9 +315,7 @@ export function PackagePaymentPage() {
                   <strong>{method.label}</strong>
                   <span>
                     {payMutation.isPending && selectedMethod === method.id
-                      ? method.id === 'cash'
-                        ? 'Marking cash payment and preparing the sticker...'
-                        : 'Opening test checkout...'
+                      ? 'Opening test checkout...'
                       : method.detail}
                   </span>
                 </button>
@@ -339,7 +336,7 @@ export function PackagePaymentPage() {
               {payMutation.isPending ? paymentPendingLabel(selectedMethod) : paymentActionLabel(selectedMethod, total)}
             </Button>
           </div>
-          <p className="kiosk-footnote">100% secure payments | Cash, UPI and card supported</p>
+          <p className="kiosk-footnote">100% secure payments | UPI and card supported</p>
         </section>
       </section>
     </main>
