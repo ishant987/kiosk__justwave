@@ -15,7 +15,6 @@ export default defineConfig({
         theme_color: '#1B3057',
         background_color: '#F5F7FB',
         display: 'standalone',
-        orientation: 'portrait',
         start_url: '/walk-in',
         scope: '/',
         icons: [
